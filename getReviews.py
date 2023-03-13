@@ -15,7 +15,7 @@ def get_reviews():
             for review in response["reviews"]:
                 reviews.append(review["content"])
             movies[i].update({"reviews": reviews})
-            if (len(movies[i]["genre"]) > 0):
+            if len(movies[i]["genre"]) > 0:
                 movies[i]["genre"] = movies[i]["genre"][1:-
                 1].replace("'", "").split(", ")
         else:
