@@ -9,7 +9,7 @@ with open(".credentials", "r", encoding="utf-8") as f:
     TMDB_API_KEY = json.load(f)["TMDB_API_KEY"]
 
 
-def get__keywords_and_adult():
+def get_keywords_and_adult():
     for i in range(len(movies) - 1, -1, -1):
         response = requests.get("https://api.themoviedb.org/3/movie/" + str(
             movies[i]["imdb_id"]) + "?api_key=" + TMDB_API_KEY + "&language=en-US").json()
@@ -28,4 +28,4 @@ def get__keywords_and_adult():
 
 
 if __name__ == "__main__":
-    get__keywords_and_adult()
+    get_keywords_and_adult()
