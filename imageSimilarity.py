@@ -31,13 +31,12 @@ nsamples, nx, ny = poster_ozellikleri.shape
 poster_ozellikleri = poster_ozellikleri.reshape((nsamples, nx * ny))
 # Posterler arasındaki benzerlikleri hesapla
 from sklearn.metrics.pairwise import cosine_similarity
-
+new_list = list()
 for i in range(len(poster_ozellikleri)):
     benzerlik_skorlari = cosine_similarity(poster_ozellikleri[i].reshape(1, -1), poster_ozellikleri)
     benzerlik_skorlari = benzerlik_skorlari[0]
     en_yakin_posterler = np.argsort(benzerlik_skorlari)[-11:-1]
-
-    new_list = list()
+    new_list.clear()
     for j in reversed(en_yakin_posterler):
         new_list.append([poster_dosyalari[j][:-4], "{:.2f}".format(benzerlik_skorlari[j])])
     poster_similarities[poster_dosyalari[i][:-4]] = new_list
