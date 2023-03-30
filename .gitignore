@@ -2,3 +2,7 @@
 /.idea
 final_data.json
 movieRecommendation/.idea
+/movieRecommendation/__pycache__
+/movieRecommendation/movieRecommendation/__pycache__
+/movieRecommendation/movieRecommendationAPI/__pycache__
+*.pyc
