@@ -2,13 +2,12 @@ import os
 import pickle
 
 import numpy as np
+import tensorflow as tf
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from sklearn.metrics.pairwise import cosine_similarity
 
-import tensorflow as tf
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 
 
 @api_view(["GET"])
