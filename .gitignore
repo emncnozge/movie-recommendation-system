@@ -6,3 +6,4 @@ movieRecommendation/.idea
 /movieRecommendation/movieRecommendation/__pycache__
 /movieRecommendation/movieRecommendationAPI/__pycache__
 *.pyc
+featuresResNet*
