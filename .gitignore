@@ -7,3 +7,5 @@ movieRecommendation/.idea
 /movieRecommendation/movieRecommendationAPI/__pycache__
 *.pyc
 featuresResNet*
+movie_reviews.json
+movie_reviews.csv
