@@ -1,10 +1,10 @@
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import numpy as np
-import pickle
-from sklearn.metrics.pairwise import cosine_similarity
-import tensorflow as tf
 from PIL import Image
+import tensorflow as tf
+from sklearn.metrics.pairwise import cosine_similarity
+import pickle
+import numpy as np
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # Veri setinin bulunduğu klasör
 data_dir = 'posters780'
@@ -20,9 +20,12 @@ with open('features.pickle', 'rb') as f:
 model = tf.keras.applications.VGG19(include_top=False, pooling='avg')
 
 # Benzer görüntüleri bulmak için bir fonksiyon yazın
+
+
 def find_similar_images(image_path, n=5):
     # Görüntüyü yükle
-    img = tf.keras.preprocessing.image.load_img(image_path, target_size=img_size)
+    img = tf.keras.preprocessing.image.load_img(
+        image_path, target_size=img_size)
     x = tf.keras.preprocessing.image.img_to_array(img)
     x = tf.keras.applications.vgg19.preprocess_input(x)
     x = np.expand_dims(x, axis=0)
@@ -42,9 +45,10 @@ def find_similar_images(image_path, n=5):
         print(f'{i+1}. {filename} - similarity: {similarities[idx]}')
         im = Image.open("posters780/"+filename)
         im.show()
-file_path=""
-while file_path!="exit":
-	file_path=input("File name: ")
-	if file_path!="exit":
-		find_similar_images("posters780/"+file_path+".jpg")
 
+
+file_path = ""
+while file_path != "exit":
+    file_path = input("File name: ")
+    if file_path != "exit":
+        find_similar_images("posters780/"+file_path+".jpg")
