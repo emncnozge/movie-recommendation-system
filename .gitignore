@@ -10,3 +10,4 @@ featuresResNet*
 movie_reviews.json
 *.csv
 movieReviews.json
+*.joblib
