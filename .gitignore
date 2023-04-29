@@ -8,6 +8,5 @@ movieRecommendation/.idea
 *.pyc
 featuresResNet*
 movie_reviews.json
-movie_reviews.csv
+*.csv
 movieReviews.json
-movieReviews.csv
