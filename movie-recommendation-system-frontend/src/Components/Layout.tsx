@@ -5,11 +5,12 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
+    console.log(children);
     return (
         <>
-            <Navbar></Navbar>
-            <div className="container-flex pl-16 pr-16 pt-8 pb-24 mx-auto">
 
+
+            <div className="container-flex pl-16 pr-16 pt-8 pb-16 mx-auto">
                 <main>{children}</main>
             </div>
         </>

@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.header {
+    font-size: 30pt;
+    font-weight: 600;
+    text-align: center;
+    color: #34455d;
+}

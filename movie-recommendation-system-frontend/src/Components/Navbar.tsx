@@ -1,16 +1,21 @@
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Search from './Search'
-const navigation = [
-    { name: 'All Movies', href: '#', current: true },
-    { name: 'Text Search', href: '#', current: false },
-]
+import Link from 'next/link'
+interface NavigationItem {
+    name: string;
+    href: string;
+    current: boolean;
+}
 
+interface NavbarProps {
+    navigation: NavigationItem[];
+}
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar({ navigation }: NavbarProps) {
     return (
         <Disclosure as="nav" className="bg-gray-800">
             {({ open }) => (
@@ -30,12 +35,12 @@ export default function Navbar() {
                             </div>
                             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                                 <div className="flex flex-shrink-0 items-center">
-
-                                    <img
-                                        className="hidden h-10 w-auto lg:block"
-                                        src="/logo.svg"
-                                        alt="Your Company"
-                                    />
+                                    <Link key={"/"} href="/">
+                                        <img
+                                            className="hidden h-10 w-auto lg:block"
+                                            src="/logo.svg"
+                                        />
+                                    </Link>
                                 </div>
                                 <div className="hidden sm:ml-6 sm:block">
                                     <div className="flex space-x-4">
