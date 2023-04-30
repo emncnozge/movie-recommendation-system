@@ -30,15 +30,20 @@ def find_similar_images(image_path, amount=5, adult=1):
 
     similarities = cosine_similarity(query_feature, features)[0]
 
-    similar_indices = similarities.argsort()[::-1][:50]
+    similar_indices = similarities.argsort()[::-1][:amount]
     total = list()
     try:
         for i, idx in enumerate(similar_indices):
             if i != 0:
-                filename = os.listdir(data_dir)[idx][:-4]
+                imdb_id = os.listdir(data_dir)[idx][:-4]
                 for data in final_data:
-                    if data["imdb_id"] == filename and int(data["adult"]) == int(adult):
-                        total.append({"filename": filename, "similarity": f'{similarities[idx]:.2f}'})
+                    if data["imdb_id"] == imdb_id and int(data["adult"]) == int(adult):
+                        total.append({
+                            "imdb_id": imdb_id,
+                            "poster_path": data["poster_path"],
+                            "title": data["title"],
+                            "similarity": f'{similarities[idx]:.2f}'
+                        })
                         break
 
     except Exception as e:
@@ -46,7 +51,7 @@ def find_similar_images(image_path, amount=5, adult=1):
     return total
 
 
-with open('../movieInfo.json', 'r', encoding="utf-8") as f:
+with open('../movie_info.json', 'r', encoding="utf-8") as f:
     final_data = json.load(f)
 
 
@@ -57,9 +62,11 @@ def root_page(request):
 
 @api_view(["POST"])
 def get_similar_images(request):
+    print(request.data)
     try:
-        data = request.data.dict()
+        data = request.data
         if "movie_id" in data and "adult" in data:
+            print(data)
             movie_id = data["movie_id"]
             adult = data["adult"]
             if "amount" in data:
@@ -90,10 +97,15 @@ def get_similar_images(request):
 
 @api_view(["GET"])
 def get_all_movies(request):
+    print(request.query_params)
     try:
+        start = int(request.query_params.get("start", 0))
+        end = int(request.query_params.get("end", len(final_data)))
+        data = final_data[start:end]
         return Response({
             "status": True,
-            "data": final_data
+            "data": data,
+            "max": len(final_data)
         })
     except Exception:
         return Response({
