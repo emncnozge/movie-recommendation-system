@@ -14,6 +14,9 @@ for movie in data:
         "imdb_id": movie["imdb_id"],
         "title": movie["title"],
         "poster_path": movie["poster_path"],
+        "adult": movie["adult"],
+        "genre": movie["genre"],
+        "keywords": movie["keywords"],
     })
 
     movieReviews.append({
