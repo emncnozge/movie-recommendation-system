@@ -32,6 +32,11 @@ def find_similar_images(image_path, amount=5, adult=1):
 
     similar_indices = similarities.argsort()[::-1][:amount]
     total = list()
+    title = ""
+    for data in final_data:
+        if data["imdb_id"] == image_path:
+            title = data["title"]
+            break
     try:
         for i, idx in enumerate(similar_indices):
             if i != 0:
@@ -48,7 +53,7 @@ def find_similar_images(image_path, amount=5, adult=1):
 
     except Exception as e:
         print(e)
-    return total
+    return total, title
 
 
 with open('../movie_info.json', 'r', encoding="utf-8") as f:
@@ -71,14 +76,19 @@ def get_similar_images(request):
             adult = data["adult"]
             if "amount" in data:
                 amount = int(data["amount"])
+                similars, title = find_similar_images(image_path=movie_id, amount=amount + 1, adult=adult)
+
                 return Response({
                     "status": True,
-                    "data": find_similar_images(image_path=movie_id, amount=amount + 1, adult=adult)
+                    "data": similars,
+                    "movie_name": title
                 })
             else:
+                similars, title = find_similar_images(image_path=movie_id, adult=1)
                 return Response({
                     "status": True,
-                    "data": find_similar_images(image_path=movie_id, adult=1)
+                    "data": similars,
+                    "movie_name": title
                 })
 
         else:
