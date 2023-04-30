@@ -60,7 +60,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                                     </div>
                                 </div>
                             </div>
-                            <Search ></Search>
+                            {/* <Search ></Search> */}
                         </div>
                     </div>
 

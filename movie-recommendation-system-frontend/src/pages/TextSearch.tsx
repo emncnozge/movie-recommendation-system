@@ -3,6 +3,7 @@ import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import Search from "@/components/Search";
 interface PosterData {
     imdb_id: string;
     poster_path: string;
@@ -17,40 +18,71 @@ interface ResponseData {
 }
 const navigation = [
     { name: "All Movies", href: "/", current: false },
-    { name: "Text Search", href: "/TextSearch", current: false },
+    { name: "Text Search", href: "/TextSearch", current: true },
 ];
-const GetSimilarPostersPage: React.FC = () => {
+const TextSearch: React.FC = () => {
     const [responseData, setResponseData] = useState<ResponseData | null>(null);
-    useEffect(() => {
-        GetSimilarMovies();
-    }, []);
-    const GetSimilarMovies = async () => {
+
+    const [searchedText, setSearchedText] = useState("");
+    const [textInfo, setTextInfo] = useState("");
+    const handleSearch = async (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setSearchedText(e.target.value);
+    }
+    const GetSimilarFromText = async () => {
         try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const movieId = urlParams.get("movie_id") as string;
             const response = await axios.post<ResponseData>(
-                "http://127.0.0.1:8000/GetSimilarPosters",
+                "http://127.0.0.1:8000/GetTextRecommendation",
                 {
-                    movie_id: movieId,
-                    amount: 18,
-                    adult: 0,
+                    searched: searchedText
                 }
             );
             setResponseData(response.data);
+            setTextInfo(searchedText);
             console.log(response.data);
         } catch (error) {
             console.log(error);
         }
     };
+    const startSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            GetSimilarFromText()
+        }
+    };
+
 
     return (
         <>
             <Navbar navigation={navigation}></Navbar>
             <Layout>
+                <div className="items-center mb-8">
+                    <div className="relative">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                            />
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
+                            onKeyDown={startSearch}
+                            onChange={handleSearch}
+                        />
+                    </div>
+                </div>
                 {responseData && responseData.status && (
                     <div className="mx-auto">
                         <h1 className="font-bold mb-8 header">
-                            Similar Movies For: "{responseData.movie_name}"{" "}
+                            Movie Recommendations Based On: "{textInfo}" Keyword
                         </h1>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 xl:gap-x-10 pb-16">
                             {responseData.data.map((movie) => (
@@ -81,5 +113,4 @@ const GetSimilarPostersPage: React.FC = () => {
         </>
     );
 };
-
-export default GetSimilarPostersPage;
+export default TextSearch;

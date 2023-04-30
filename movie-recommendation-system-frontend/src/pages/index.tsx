@@ -19,7 +19,7 @@ interface ResponseData {
 }
 const navigation = [
   { name: "All Movies", href: "/", current: true },
-  { name: "Text Search", href: "#", current: false },
+  { name: "Text Search", href: "/TextSearch", current: false },
 ];
 const GetSimilarPostersPage: React.FC = () => {
   const [responseData, setResponseData] = useState<ResponseData | null>(null);
@@ -77,7 +77,6 @@ const GetSimilarPostersPage: React.FC = () => {
   const changePage = (e: React.KeyboardEvent<HTMLInputElement>) => {
     let val: number = parseInt(e.currentTarget.value) - 1;
     let maxPage: number = Math.ceil(max / moviePerPage);
-    console.log(maxPage);
     if (e.key === "Enter") {
       if (isNaN(val) || val === null) {
       } else if (val >= maxPage) {

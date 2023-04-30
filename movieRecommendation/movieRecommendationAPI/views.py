@@ -1,14 +1,21 @@
+from sklearn.metrics.pairwise import cosine_similarity
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+import tensorflow as tf
 import json
 import os
 import pickle
-
+from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
+from tensorflow.keras import layers
+import pandas as pd
+from sklearn.neighbors import NearestNeighbors
+import string
+import re
+import joblib
+import os
 import numpy as np
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import tensorflow as tf
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from sklearn.metrics.pairwise import cosine_similarity
 
 data_dir = '../posters780'
 
@@ -19,9 +26,16 @@ with open('../featuresResNet50.pickle', 'rb') as f:
 
 model = tf.keras.applications.ResNet50(include_top=False, pooling='avg')
 
+# Load model
+directory = "saved_model"
+file_path = os.path.join(directory, "nearest_neighbors.joblib")
+if os.path.exists(directory):
+    nn = joblib.load(file_path)
+
 
 def find_similar_images(image_path, amount=5, adult=1):
-    img = tf.keras.preprocessing.image.load_img("../posters780/" + image_path + ".jpg", target_size=img_size)
+    img = tf.keras.preprocessing.image.load_img(
+        "../posters780/" + image_path + ".jpg", target_size=img_size)
     x = tf.keras.preprocessing.image.img_to_array(img)
     x = tf.keras.applications.resnet50.preprocess_input(x)
     x = np.expand_dims(x, axis=0)
@@ -76,7 +90,8 @@ def get_similar_images(request):
             adult = data["adult"]
             if "amount" in data:
                 amount = int(data["amount"])
-                similars, title = find_similar_images(image_path=movie_id, amount=amount + 1, adult=adult)
+                similars, title = find_similar_images(
+                    image_path=movie_id, amount=amount + 1, adult=adult)
 
                 return Response({
                     "status": True,
@@ -84,12 +99,69 @@ def get_similar_images(request):
                     "movie_name": title
                 })
             else:
-                similars, title = find_similar_images(image_path=movie_id, adult=1)
+                similars, title = find_similar_images(
+                    image_path=movie_id, adult=1)
                 return Response({
                     "status": True,
                     "data": similars,
                     "movie_name": title
                 })
+
+        else:
+            return Response(False)
+    except AttributeError:
+        return Response({
+            "status": False,
+            "message": "Movie ID not provided."
+        })
+    except Exception:
+        return Response({
+            "status": False,
+            "message": "Error occured."
+        })
+
+
+max_vocab_length = 10000
+max_length = 6063
+embedding = layers.Embedding(input_dim=max_vocab_length,
+                             output_dim=64,
+                             input_length=max_length)
+text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
+                                    output_mode="int",
+                                    output_sequence_length=max_length,
+                                    pad_to_max_tokens=True)
+translator = str.maketrans('', '', string.punctuation)
+# Remove whitespace
+reviews = pd.read_csv("./mergedReviews.csv")
+for i in range(len(reviews)):
+    reviews["reviews"][i] = reviews["reviews"][i].lower()
+    reviews["reviews"][i] = re.sub(r'\d+', '', reviews["reviews"][i])
+    reviews["reviews"][i] = reviews["reviews"][i].translate(translator)
+    reviews["reviews"][i] = " ".join(reviews["reviews"][i].split())
+text_vectorizer.adapt(reviews["reviews"])
+
+
+@api_view(["POST"])
+def get_text_recommendation(request):
+    try:
+        data = request.data
+
+        if "searched" in data:
+            searched = data["searched"]
+            text = embedding(text_vectorizer(searched))
+            neighbours = nn.kneighbors(text, return_distance=False)
+            similars = []
+            for index in neighbours[0]:
+                movie_id = reviews.iloc[index]["imdb_id"]
+                for movie in final_data:
+                    if movie["imdb_id"] == movie_id:
+                        similars.append(
+                            {"imdb_id": movie_id, "poster_path": movie["poster_path"], "title": movie["title"]})
+
+            return Response({
+                "status": True,
+                "data": similars
+            })
 
         else:
             return Response(False)

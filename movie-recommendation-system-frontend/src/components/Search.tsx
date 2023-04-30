@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Search() {
+export default function Search({ ...props }) {
     return (
         <form className="flex flex-shrink-0 items-center">
             <div className="relative">
@@ -22,6 +22,7 @@ export default function Search() {
                     type="text"
                     placeholder="Search"
                     className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
+
                 />
             </div>
         </form>

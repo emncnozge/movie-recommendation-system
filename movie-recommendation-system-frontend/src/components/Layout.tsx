@@ -5,7 +5,6 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
-    console.log(children);
     return (
         <>
 
