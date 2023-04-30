@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Layout from "@/Components/Layout";
+import Layout from "@/components/Layout";
 import Link from "next/link";
-import Navbar from "@/Components/Navbar";
+import Navbar from "@/components/Navbar";
 interface PosterData {
     imdb_id: string;
     poster_path: string;
