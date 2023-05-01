@@ -124,7 +124,7 @@ def get_similar_images(request):
 max_vocab_length = 10000
 max_length = 6063
 embedding = layers.Embedding(input_dim=max_vocab_length,
-                             output_dim=128,
+                             output_dim=64,
                              input_length=max_length)
 text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
                                     output_mode="int",
@@ -133,11 +133,18 @@ text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
 translator = str.maketrans('', '', string.punctuation)
 # Remove whitespace
 reviews = pd.read_csv("./mergedReviews.csv")
-for i in range(len(reviews)):
-    reviews["reviews"][i] = reviews["reviews"][i].lower()
-    reviews["reviews"][i] = re.sub(r'\d+', '', reviews["reviews"][i])
-    reviews["reviews"][i] = reviews["reviews"][i].translate(translator)
-    reviews["reviews"][i] = " ".join(reviews["reviews"][i].split())
+if os.path.isfile("reviews.pickle"):
+    with open('reviews.pkl', 'rb') as f:
+        reviews = pickle.load(f)
+else:
+    for i in range(len(reviews)):
+        reviews["reviews"][i] = reviews["reviews"][i].lower()
+        reviews["reviews"][i] = re.sub(r'\d+', '', reviews["reviews"][i])
+        reviews["reviews"][i] = reviews["reviews"][i].translate(translator)
+        reviews["reviews"][i] = " ".join(reviews["reviews"][i].split())
+    with open('reviews.pkl', 'wb') as f:
+        pickle.dump(reviews, f)
+
 text_vectorizer.adapt(reviews["reviews"])
 
 
@@ -147,7 +154,7 @@ def get_text_recommendation(request):
         data = request.data
 
         if "searched" in data:
-            searched = data["searched"]
+            searched = data["searched"].lower()
             text = embedding(text_vectorizer(searched))
             neighbours = nn.kneighbors(text, return_distance=False)
             similars = []
