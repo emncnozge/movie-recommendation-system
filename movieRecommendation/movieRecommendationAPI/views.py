@@ -124,7 +124,7 @@ def get_similar_images(request):
 max_vocab_length = 10000
 max_length = 6063
 embedding = layers.Embedding(input_dim=max_vocab_length,
-                             output_dim=64,
+                             output_dim=128,
                              input_length=max_length)
 text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
                                     output_mode="int",
@@ -170,10 +170,11 @@ def get_text_recommendation(request):
             "status": False,
             "message": "Movie ID not provided."
         })
-    except Exception:
+    except Exception as e:
+        print(e)
         return Response({
             "status": False,
-            "message": "Error occured."
+            "message": "Error occured"
         })
 
 
