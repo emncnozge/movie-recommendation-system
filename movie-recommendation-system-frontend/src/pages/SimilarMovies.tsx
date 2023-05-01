@@ -16,7 +16,7 @@ interface ResponseData {
     movie_name: string;
 }
 const navigation = [
-    { name: "All Movies", href: "/", current: false },
+    { name: "Poster Search", href: "/", current: false },
     { name: "Text Search", href: "/TextSearch", current: false },
 ];
 const GetSimilarPostersPage: React.FC = () => {
