@@ -17,7 +17,7 @@ interface ResponseData {
     movie_name: string;
 }
 const navigation = [
-    { name: "All Movies", href: "/", current: false },
+    { name: "Poster Search", href: "/", current: false },
     { name: "Text Search", href: "/TextSearch", current: true },
 ];
 const TextSearch: React.FC = () => {
@@ -25,15 +25,17 @@ const TextSearch: React.FC = () => {
 
     const [searchedText, setSearchedText] = useState("");
     const [textInfo, setTextInfo] = useState("");
-    const handleSearch = async (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    const handleSearch = async (e: {
+        target: { value: React.SetStateAction<string> };
+    }) => {
         setSearchedText(e.target.value);
-    }
+    };
     const GetSimilarFromText = async () => {
         try {
             const response = await axios.post<ResponseData>(
                 "http://127.0.0.1:8000/GetTextRecommendation",
                 {
-                    searched: searchedText
+                    searched: searchedText,
                 }
             );
             setResponseData(response.data);
@@ -45,16 +47,52 @@ const TextSearch: React.FC = () => {
     };
     const startSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            GetSimilarFromText()
+            GetSimilarFromText();
         }
     };
+    const [dotCount, setDotCount] = useState(0);
+    function updatePlaceholder() {
+        setDotCount((prevCount) => {
+            if (prevCount < 3) {
+                return prevCount + 1;
+            } else {
+                return 0;
+            }
+        });
+    }
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            updatePlaceholder();
+        }, 500);
 
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (responseData && responseData.status) {
+            if (typeof document !== 'undefined') {
+
+                if (document.getElementsByName("search").length > 0) {
+                    document.getElementsByName("search")[0].classList.remove("searchbar");
+                }
+            }
+        }
+    }, [responseData]);
     return (
         <>
             <Navbar navigation={navigation}></Navbar>
             <Layout>
                 <div className="items-center mb-8">
+                    {!responseData && (
+                        <div className="mx-auto">
+                            <h1 className="font-bold mb-8 header">
+                                Start Searching
+                            </h1>
+                        </div>
+                    )}
                     <div className="relative">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -72,8 +110,9 @@ const TextSearch: React.FC = () => {
                         </svg>
                         <input
                             type="text"
-                            placeholder="Search"
-                            className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
+                            name="search"
+                            placeholder={"Search a word" + ".".repeat(dotCount)}
+                            className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600 searchbar"
                             onKeyDown={startSearch}
                             onChange={handleSearch}
                         />
@@ -107,6 +146,11 @@ const TextSearch: React.FC = () => {
                                 </Link>
                             ))}
                         </div>
+                    </div>
+                )}
+                {responseData && !responseData.status && (
+                    <div className="mx-auto">
+                        <h1 className="font-bold mb-8 header">Not Found</h1>
                     </div>
                 )}
             </Layout>

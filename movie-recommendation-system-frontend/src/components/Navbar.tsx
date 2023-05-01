@@ -37,7 +37,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                                 <div className="flex flex-shrink-0 items-center">
                                     <Link key={"/"} href="/">
                                         <img
-                                            className="hidden h-10 w-auto lg:block"
+                                            className="hidden h-10 w-auto sm:block"
                                             src="/logo.svg"
                                         />
                                     </Link>

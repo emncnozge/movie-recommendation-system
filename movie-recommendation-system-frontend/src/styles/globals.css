@@ -8,3 +8,21 @@
     text-align: center;
     color: #34455d;
 }
+
+.paginationbuttons {
+    background-color: #1f2937;
+    cursor: pointer;
+}
+
+.paginationbuttons:hover {
+    background-color: #496183;
+}
+
+.paginationbuttons:active {
+    background-color: #7399cf;
+}
+
+.searchbar {
+    height: 10vh;
+    border-radius: 8rem;
+}

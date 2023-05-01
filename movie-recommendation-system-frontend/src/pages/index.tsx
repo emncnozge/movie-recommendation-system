@@ -18,7 +18,7 @@ interface ResponseData {
   max: number;
 }
 const navigation = [
-  { name: "All Movies", href: "/", current: true },
+  { name: "Poster Search", href: "/", current: true },
   { name: "Text Search", href: "/TextSearch", current: false },
 ];
 const GetSimilarPostersPage: React.FC = () => {
@@ -104,11 +104,11 @@ const GetSimilarPostersPage: React.FC = () => {
       <Layout>
         {responseData && responseData.status && (
           <div className="mx-auto">
-            <h1 className="mb-4 mx-auto header">All Movies</h1>
+            <h1 className="mb-4 mx-auto header">Poster Search</h1>
             <div className="mb-4" style={{ textAlign: "center" }}>
               <button
                 onClick={handlePrev}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                className="text-white font-bold py-2 px-4 rounded paginationbuttons paginationbuttons"
                 disabled={currentPage == 1 ? true : false}
               >
                 Prev
@@ -128,7 +128,7 @@ const GetSimilarPostersPage: React.FC = () => {
               </div>
               <button
                 onClick={handleNext}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                className="text-white font-bold py-2 px-4 rounded paginationbuttons"
                 disabled={
                   currentPage == Math.ceil(max / moviePerPage)
                     ? true
@@ -167,8 +167,8 @@ const GetSimilarPostersPage: React.FC = () => {
             <div className="mb-4" style={{ textAlign: "center" }}>
               <button
                 onClick={handlePrev}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
-                disabled={currentPage == 1 ? true : false}
+                className="text-white font-bold py-2 px-4 rounded paginationbuttons"
+                disabled={currentPage == 1}
               >
                 Prev
               </button>
@@ -187,11 +187,9 @@ const GetSimilarPostersPage: React.FC = () => {
               </div>
               <button
                 onClick={handleNext}
-                className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                className="text-white font-bold py-2 px-4 rounded paginationbuttons"
                 disabled={
                   currentPage == Math.ceil(max / moviePerPage)
-                    ? true
-                    : false
                 }
               >
                 Next
