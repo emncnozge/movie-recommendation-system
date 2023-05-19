@@ -1,30 +1,125 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
-export default function Search({ ...props }) {
+interface SearchResult {
+    imdb_id: string;
+    title: string;
+    poster_path: string;
+    adult: number;
+    genre: string[];
+    keywords: { id: number; name: string }[];
+}
+
+const Search: React.FC = () => {
+    const [searchText, setSearchText] = useState('');
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        let timerId: NodeJS.Timeout;
+
+        const fetchSearchResults = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/Search', {
+                    params: { search: searchText },
+                });
+                setSearchResults(response.data.data);
+                setLoading(false);
+                setShowDropdown(true); // Sonuçlar döndüğünde dropdown alanını göster
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+                setLoading(false);
+                setShowDropdown(false); // Hata durumunda dropdown alanını gizle
+            }
+        };
+
+        if (searchText && searchText.length >= 3) {
+            timerId = setTimeout(() => {
+                fetchSearchResults();
+            }, 300);
+        } else {
+            setSearchResults([]); // Metin girilmediğinde sonuçları sıfırla
+            setShowDropdown(false); // Metin girilmediğinde dropdown alanını gizle
+        }
+
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [searchText]);
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchText(event.target.value);
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            // Arama yapma işlemi burada gerçekleştirilebilir
+            // Örneğin: window.location.href = '/search?q=' + searchText;
+        }
+    };
+
+    const handleSelectItem = (item: SearchResult) => {
+        setSearchText(item.title);
+        setShowDropdown(false);
+    };
+
+    const handleSearchBarClick = () => {
+        setShowDropdown(true);
+    };
+
+    const handleOutsideClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+
+        if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+            setShowDropdown(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            window.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
+
     return (
-        <form className="flex flex-shrink-0 items-center">
+        <div className="flex flex-col items-center">
             <div className="relative">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                </svg>
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />
+                </div>
                 <input
                     type="text"
-                    placeholder="Search"
-                    className="w-full py-3 pl-12 pr-4 text-gray-500 border rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
-
+                    value={searchText}
+                    onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
+                    className="pl-10 pr-4 py-2 w-64 md:w-80 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search..."
                 />
+                {showDropdown && searchResults.length > 0 && (
+                    <ul className="mt-1 w-64 md:w-80 bg-white rounded-md shadow-md absolute z-10">
+                        {searchResults.map((result) => (
+                            <li
+                                key={result.imdb_id}
+                                className={`flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 cursor-pointer hover:rounded-md
+                                    }`}
+                                onClick={() => handleSelectItem(result)}
+                            >
+                                <img src={result.poster_path} alt={result.title} className="h-20" />
+                                <span>{result.title}</span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
-        </form>
+        </div >
     );
-}
+};
+
+export default Search;
