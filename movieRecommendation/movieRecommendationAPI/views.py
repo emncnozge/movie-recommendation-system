@@ -79,6 +79,43 @@ def root_page(request):
     return Response("Root page")
 
 
+@api_view(["GET"])
+def search(request):
+    try:
+        search_term = str(request.GET.get("search")).strip()
+        movies = []
+        exact = []
+        partial = []
+        for movie in final_data:
+            if len(exact) >= 5:
+                return Response({
+                    "status": True,
+                    "data": exact,
+                })
+            for word in str(movie["title"]).split():
+                if str(word).lower() == search_term.lower():
+                    exact.append(movie)
+            if search_term.lower() in str(movie["title"]).lower():
+                partial.append(movie)
+        # Exact içindeki filmleri partial'dan çıkar
+        exact = [movie for movie in exact if movie not in partial]
+        movies = exact[:5]
+
+        if len(movies) < 5:
+            remaining = 5 - len(movies)
+            movies += partial[:remaining]
+
+        return Response({
+            "status": True,
+            "data": movies,
+        })
+    except Exception as e:
+        return Response({
+            "status": False,
+            "message": "Error occured: " + str(e)
+        })
+
+
 @api_view(["POST"])
 def get_similar_images(request):
     print(request.data)

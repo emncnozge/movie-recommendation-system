@@ -7,5 +7,6 @@ urlpatterns = [
     path('GetSimilarPosters', views.get_similar_images),
     path('GetAllMovies', views.get_all_movies),
     path('GetMovie', views.get_movie),
-    path('GetTextRecommendation', views.get_text_recommendation)
+    path('GetTextRecommendation', views.get_text_recommendation),
+    path('Search', views.search),
 ]
