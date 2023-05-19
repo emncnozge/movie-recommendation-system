@@ -3,7 +3,6 @@ import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
 interface PosterData {
   imdb_id: string;
