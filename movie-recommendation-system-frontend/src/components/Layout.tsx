@@ -1,16 +1,34 @@
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
+import { AnimatePresence, motion } from "framer-motion";
 type LayoutProps = {
     children: ReactNode;
+    navigation: NavigationItem[]; // Add navigation prop to LayoutProps
 };
 
-const Layout = ({ children }: LayoutProps) => {
+interface NavigationItem {
+    name: string;
+    href: string;
+    current: boolean;
+}
+
+const Layout = ({ navigation, children }: LayoutProps) => {
+    console.log(navigation)
     return (
         <>
+            <Navbar navigation={navigation}></Navbar>
+            <div className="container-flex pl-16 pr-16 pt-4 pb-16 mx-auto">
 
-
-            <div className="container-flex pl-16 pr-16 pt-8 pb-16 mx-auto">
-                <main>{children}</main>
+                <AnimatePresence>
+                    <motion.main
+                        initial={{ opacity: 0.6, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {children}
+                    </motion.main>
+                </AnimatePresence>
             </div>
         </>
     );

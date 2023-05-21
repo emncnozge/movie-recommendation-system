@@ -16,10 +16,10 @@ interface ResponseData {
     movie_name: string;
 }
 const navigation = [
-    { name: "Poster Search", href: "/", current: false },
+    { name: "Movies", href: "/", current: false },
     { name: "Text Search", href: "/TextSearch", current: false },
 ];
-const GetSimilarPostersPage: React.FC = () => {
+const SimilarMovies: React.FC = () => {
     const [responseData, setResponseData] = useState<ResponseData | null>(null);
     useEffect(() => {
         GetSimilarMovies();
@@ -45,18 +45,18 @@ const GetSimilarPostersPage: React.FC = () => {
 
     return (
         <>
-            <Navbar navigation={navigation}></Navbar>
-            <Layout>
+            <Layout navigation={navigation}>
                 {responseData && responseData.status && (
                     <div className="mx-auto">
                         <h1 className="font-bold mb-8 header">
-                            Similar Movies For: "{responseData.movie_name}"{" "}
+                            Similar Movies For: &quot;{responseData.movie_name}&quot;
                         </h1>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 xl:gap-x-10 pb-16">
                             {responseData.data.map((movie) => (
                                 <Link
                                     key={movie.imdb_id}
-                                    href={movie.poster_path}
+                                    href={"/Movie?movie_id=" + movie.imdb_id}
+                                    passHref
                                     className="group"
                                 >
                                     <div className="aspect-h-1 aspect-w-1 h-full overflow-hidden rounded-lg bg-gray-100 xl:aspect-h-8 xl:aspect-w-7">
@@ -82,4 +82,4 @@ const GetSimilarPostersPage: React.FC = () => {
     );
 };
 
-export default GetSimilarPostersPage;
+export default SimilarMovies;

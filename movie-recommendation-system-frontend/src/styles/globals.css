@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
 .header {
     font-size: 30pt;
     font-weight: 600;
@@ -9,21 +20,59 @@
     color: #34455d;
 }
 
-.paginationbuttons {
+.paginationbuttons,
+.findButton,
+.imdbButton {
     background-color: #1f2937;
     cursor: pointer;
+    transition: .15s ease-in;
+    text-align: center;
 }
 
-.paginationbuttons:hover {
+.imdbButton {
+    background-color: #1f2937;
+    cursor: pointer;
+    transition: .15s ease-in;
+}
+
+.paginationbuttons:hover,
+.findButton:hover,
+.imdbButton:hover {
     background-color: #496183;
 }
 
-.paginationbuttons:active {
+.imdbButton {
+    background-color: #f6c800;
+    color: #000;
+}
+
+.imdbButton:hover {
+    background-color: #ffe000;
+}
+
+.findButton:hover,
+.imdbButton:hover {
+    transform: scale(1.02);
+}
+
+.paginationbuttons:active,
+.findButton:active {
     background-color: #7399cf;
+}
+
+.imdbButton:active {
+    background-color: #ccb300;
 }
 
 .searchbar {
     height: 10vh;
     border-radius: 8rem;
     font-size: 2rem;
+}
+
+.subheaders {
+    font-size: 16pt;
+    font-weight: 500;
+    text-align: justify;
+    color: #34455d;
 }

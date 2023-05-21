@@ -7,12 +7,11 @@ interface NavigationItem {
     href: string;
     current: boolean;
 }
-
-interface NavbarProps {
-    navigation: NavigationItem[];
-}
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
+}
+interface NavbarProps {
+    navigation: NavigationItem[];
 }
 
 export default function Navbar({ navigation }: NavbarProps) {
@@ -35,7 +34,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                             </div>
                             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                                 <div className="flex flex-shrink-0 items-center">
-                                    <Link key={"/"} href="/">
+                                    <Link key={"/"} href="/" passHref>
                                         <img
                                             className="hidden h-10 w-auto sm:block"
                                             src="/logo.svg"
@@ -45,9 +44,10 @@ export default function Navbar({ navigation }: NavbarProps) {
                                 <div className="hidden sm:ml-6 sm:block">
                                     <div className="flex space-x-4">
                                         {navigation.map((item) => (
-                                            <a
+                                            <Link
                                                 key={item.name}
                                                 href={item.href}
+                                                passHref
                                                 className={classNames(
                                                     item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                                                     'rounded-md px-3 py-2 text-sm font-medium'
@@ -55,7 +55,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                                                 aria-current={item.current ? 'page' : undefined}
                                             >
                                                 {item.name}
-                                            </a>
+                                            </Link>
                                         ))}
                                     </div>
                                 </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 interface SearchResult {
     imdb_id: string;
@@ -63,14 +64,6 @@ const Search: React.FC = () => {
         }
     };
 
-    const handleSelectItem = (item: SearchResult) => {
-        setSearchText(item.title);
-        setShowDropdown(false);
-    };
-
-    const handleSearchBarClick = () => {
-        setShowDropdown(true);
-    };
 
     const handleOutsideClick = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
@@ -105,15 +98,14 @@ const Search: React.FC = () => {
                 {showDropdown && searchResults.length > 0 && (
                     <ul className="mt-1 w-64 md:w-80 bg-white rounded-md shadow-md absolute z-10">
                         {searchResults.map((result) => (
-                            <li
-                                key={result.imdb_id}
+                            <Link key={result.imdb_id} href={"/MoviePage?movie_id=" + result.imdb_id} passHref
                                 className={`flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 cursor-pointer hover:rounded-md
                                     }`}
-                                onClick={() => handleSelectItem(result)}
                             >
                                 <img src={result.poster_path} alt={result.title} className="h-20" />
                                 <span>{result.title}</span>
-                            </li>
+
+                            </Link>
                         ))}
                     </ul>
                 )}

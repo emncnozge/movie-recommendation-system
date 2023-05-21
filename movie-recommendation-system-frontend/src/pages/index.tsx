@@ -3,6 +3,7 @@ import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PosterData {
   imdb_id: string;
@@ -17,10 +18,11 @@ interface ResponseData {
   max: number;
 }
 const navigation = [
-  { name: "Poster Search", href: "/", current: true },
+  { name: "Movies", href: "/", current: true },
   { name: "Text Search", href: "/TextSearch", current: false },
 ];
-const GetSimilarPostersPage: React.FC = () => {
+
+const MoviesPage: React.FC = () => {
   const [responseData, setResponseData] = useState<ResponseData | null>(null);
   const [moviePerPage, setMoviePerPage] = useState(18);
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,15 +101,14 @@ const GetSimilarPostersPage: React.FC = () => {
   };
   return (
     <>
-      <Navbar navigation={navigation}></Navbar>
-      <Layout>
+      <Layout navigation={navigation}>
         {responseData && responseData.status && (
           <div className="mx-auto">
             <h1 className="mb-4 mx-auto header">Poster Search</h1>
             <div className="mb-4" style={{ textAlign: "center" }}>
               <button
                 onClick={handlePrev}
-                className="text-white font-bold py-2 px-4 rounded paginationbuttons paginationbuttons"
+                className="text-white font-bold py-2 px-4 rounded paginationbuttons"
                 disabled={currentPage == 1 ? true : false}
               >
                 Prev
@@ -142,11 +143,12 @@ const GetSimilarPostersPage: React.FC = () => {
                 <Link
                   key={movie.imdb_id}
                   href={
-                    "/SimilarMovies?movie_id=" +
+                    "/Movie?movie_id=" +
                     movie.imdb_id
                   }
                   className="group"
                 >
+
                   <div className="aspect-h-1 aspect-w-1 h-full overflow-hidden rounded-lg bg-gray-100 xl:aspect-h-8 xl:aspect-w-7">
                     <img
                       src={movie.poster_path}
@@ -201,4 +203,4 @@ const GetSimilarPostersPage: React.FC = () => {
   );
 };
 
-export default GetSimilarPostersPage;
+export default MoviesPage;
