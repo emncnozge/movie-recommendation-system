@@ -32,7 +32,7 @@ const GetSimilarPostersPage: React.FC = () => {
                 "http://127.0.0.1:8000/GetSimilarPosters",
                 {
                     movie_id: movieId,
-                    amount: 18,
+                    amount: 23,
                     adult: 0,
                 }
             );
