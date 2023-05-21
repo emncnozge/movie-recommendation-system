@@ -174,7 +174,7 @@ text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
                                     pad_to_max_tokens=True)
 translator = str.maketrans('', '', string.punctuation)
 # Remove whitespace
-reviews = pd.read_csv("./mergedReviews.csv")
+reviews = pd.read_csv("./reviewsClean.csv")
 if os.path.isfile("reviews.pickle"):
     with open('reviews.pkl', 'rb') as f:
         reviews = pickle.load(f)
