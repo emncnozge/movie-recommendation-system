@@ -44,30 +44,37 @@ def find_similar_images(image_path, amount=5, adult=1):
 
     similarities = cosine_similarity(query_feature, features)[0]
 
-    similar_indices = similarities.argsort()[::-1][:amount]
+    similar_indices = similarities.argsort()[::-1]
     total = list()
     title = ""
+    original_genre = []
     for data in final_data:
         if data["imdb_id"] == image_path:
-            title = data["title"]
+            title = data["title"],
+            original_genre = data["genre"]
             break
     try:
         for i, idx in enumerate(similar_indices):
             if i != 0:
                 imdb_id = os.listdir(data_dir)[idx][:-4]
                 for data in final_data:
+                    if (len(total) > amount):
+                        return total[:amount], title
                     if data["imdb_id"] == imdb_id and int(data["adult"]) == int(adult):
-                        total.append({
-                            "imdb_id": imdb_id,
-                            "poster_path": data["poster_path"],
-                            "title": data["title"],
-                            "similarity": f'{similarities[idx]:.2f}'
-                        })
+                        for genre in original_genre:
+                            if genre in data["genre"]:
+                                total.append({
+                                    "imdb_id": imdb_id,
+                                    "poster_path": data["poster_path"],
+                                    "title": data["title"],
+                                    "similarity": f'{similarities[idx]:.2f}'
+                                })
+                                break
                         break
 
     except Exception as e:
         print(e)
-    return total, title
+    return total[:amount], title
 
 
 with open('../movie_info.json', 'r', encoding="utf-8") as f:
@@ -118,11 +125,9 @@ def search(request):
 
 @api_view(["POST"])
 def get_similar_images(request):
-    print(request.data)
     try:
         data = request.data
         if "movie_id" in data and "adult" in data:
-            print(data)
             movie_id = data["movie_id"]
             adult = data["adult"]
             if "amount" in data:
@@ -215,7 +220,6 @@ def get_text_recommendation(request):
             "message": "Movie ID not provided."
         })
     except Exception as e:
-        print(e)
         return Response({
             "status": False,
             "message": "Error occured"
@@ -224,7 +228,6 @@ def get_text_recommendation(request):
 
 @api_view(["GET"])
 def get_all_movies(request):
-    print(request.query_params)
     try:
         start = int(request.query_params.get("start", 0))
         end = int(request.query_params.get("end", len(final_data)))
