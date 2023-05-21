@@ -98,7 +98,7 @@ const Search: React.FC = () => {
                 {showDropdown && searchResults.length > 0 && (
                     <ul className="mt-1 w-64 md:w-80 bg-white rounded-md shadow-md absolute z-10">
                         {searchResults.map((result) => (
-                            <Link key={result.imdb_id} href={"/MoviePage?movie_id=" + result.imdb_id} passHref
+                            <Link key={result.imdb_id} href={"/Movie?movie_id=" + result.imdb_id} passHref
                                 className={`flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 cursor-pointer hover:rounded-md
                                     }`}
                             >
