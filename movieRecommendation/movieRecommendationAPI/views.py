@@ -10,7 +10,6 @@ from tensorflow.keras import layers
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import string
-import re
 import joblib
 import os
 import numpy as np
@@ -174,19 +173,23 @@ def get_similar_images(request):
 
 
 max_vocab_length = 10000
-max_length = 6063
-embedding = layers.Embedding(input_dim=max_vocab_length,
-                             output_dim=64,
-                             input_length=max_length)
+max_length = 19800
+reviews = pd.read_csv("./reviewsClean.csv")
 text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
                                     output_mode="int",
                                     output_sequence_length=max_length,
                                     pad_to_max_tokens=True)
-translator = str.maketrans('', '', string.punctuation)
-# Remove whitespace
-reviews = pd.read_csv("./reviewsClean.csv")
-
 text_vectorizer.adapt(reviews["reviews"])
+embedding = layers.Embedding(input_dim=max_vocab_length,
+                             output_dim=64,
+                             input_length=max_length)
+
+pooling_layer = layers.GlobalAveragePooling1D()
+x = text_vectorizer(reviews["reviews"])
+x = embedding(x)
+x = pooling_layer(x)
+nn = NearestNeighbors(n_neighbors=24)
+nn.fit(x)
 
 
 @api_view(["POST"])
