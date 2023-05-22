@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import { motion, AnimatePresence } from "framer-motion";
+import { useAppContext } from "./AppContext";
 
 interface PosterData {
   imdb_id: string;
@@ -29,11 +28,14 @@ const MoviesPage: React.FC = () => {
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(moviePerPage);
   const [max, setMax] = useState(end);
+  const { isAdult, setIsAdult } = useAppContext();
   useEffect(() => {
+    document.title = 'Movies';
     getMovies(start, end);
   }, [start, end]);
 
   const getMovies = async (start: number, end: number) => {
+
     try {
       const response = await axios.get<ResponseData>(
         "http://127.0.0.1:8000/GetAllMovies",
@@ -41,12 +43,12 @@ const MoviesPage: React.FC = () => {
           params: {
             start: start, // Replace with your desired start value
             end: end, // Replace with your desired end value
+            adult: isAdult ? 1 : 0
           },
         }
       );
       setResponseData(response.data);
       setMax(response.data.max);
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +106,7 @@ const MoviesPage: React.FC = () => {
       <Layout navigation={navigation}>
         {responseData && responseData.status && (
           <div className="mx-auto">
-            <h1 className="mb-4 mx-auto header">Poster Search</h1>
+            <h1 className="mb-4 mx-auto header">Movies</h1>
             <div className="mb-4" style={{ textAlign: "center" }}>
               <button
                 onClick={handlePrev}

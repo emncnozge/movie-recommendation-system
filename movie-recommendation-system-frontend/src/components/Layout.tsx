@@ -13,7 +13,6 @@ interface NavigationItem {
 }
 
 const Layout = ({ navigation, children }: LayoutProps) => {
-    console.log(navigation)
     return (
         <>
             <Navbar navigation={navigation}></Navbar>

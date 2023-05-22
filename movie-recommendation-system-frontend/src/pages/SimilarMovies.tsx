@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+import { useAppContext } from "./AppContext";
 interface PosterData {
     imdb_id: string;
     poster_path: string;
@@ -20,8 +20,10 @@ const navigation = [
     { name: "Text Search", href: "/TextSearch", current: false },
 ];
 const SimilarMovies: React.FC = () => {
+    const { isAdult, setIsAdult } = useAppContext();
     const [responseData, setResponseData] = useState<ResponseData | null>(null);
     useEffect(() => {
+        document.title = 'Similar Movies';
         GetSimilarMovies();
     }, []);
     const GetSimilarMovies = async () => {
@@ -33,11 +35,10 @@ const SimilarMovies: React.FC = () => {
                 {
                     movie_id: movieId,
                     amount: 23,
-                    adult: 0,
+                    adult: isAdult ? 1 : 0,
                 }
             );
             setResponseData(response.data);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         }

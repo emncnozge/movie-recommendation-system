@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Search from "@/components/Search";
+import { useAppContext } from "./AppContext";
 interface PosterData {
     imdb_id: string;
     poster_path: string;
@@ -22,7 +21,7 @@ const navigation = [
 ];
 const TextSearch: React.FC = () => {
     const [responseData, setResponseData] = useState<ResponseData | null>(null);
-
+    const { isAdult, setIsAdult } = useAppContext();
     const [searchedText, setSearchedText] = useState("");
     const [textInfo, setTextInfo] = useState("");
     const handleSearch = async (e: {
@@ -31,16 +30,17 @@ const TextSearch: React.FC = () => {
         setSearchedText(e.target.value);
     };
     const GetSimilarFromText = async () => {
+
         try {
             const response = await axios.post<ResponseData>(
                 "http://127.0.0.1:8000/GetTextRecommendation",
                 {
                     searched: searchedText,
+                    adult: isAdult ? 1 : 0
                 }
             );
             setResponseData(response.data);
             setTextInfo(searchedText);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -62,6 +62,7 @@ const TextSearch: React.FC = () => {
     }
 
     useEffect(() => {
+        document.title = 'Text Search';
         const intervalId = setInterval(() => {
             updatePlaceholder();
         }, 500);

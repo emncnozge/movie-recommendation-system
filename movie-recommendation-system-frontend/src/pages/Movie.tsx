@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import { ArrowRightIcon, FilmIcon, LinkIcon, MagnifyingGlassIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, LinkIcon, PhotoIcon } from "@heroicons/react/24/outline";
 
 interface MovieData {
     imdb_id: string;
@@ -30,6 +29,8 @@ const Movie: React.FC = () => {
     const [responseData, setResponseData] = useState<ResponseData | null>(null);
     useEffect(() => {
         GetMovie();
+        if (responseData?.data.title)
+            document.title = responseData.data.title;
     }, [url]);
     const GetMovie = async () => {
         if (typeof window !== 'undefined') {
@@ -45,7 +46,7 @@ const Movie: React.FC = () => {
                 }
             );
             setResponseData(response.data);
-            console.log(response.data);
+            document.title = response.data.data.title;
         } catch (error) {
             console.log(error);
         }

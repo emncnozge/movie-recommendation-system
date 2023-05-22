@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useAppContext } from '@/pages/AppContext';
 
 interface SearchResult {
     imdb_id: string;
@@ -19,7 +20,7 @@ const Search: React.FC = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
-
+    const { isAdult, setIsAdult } = useAppContext();
     useEffect(() => {
         let timerId: NodeJS.Timeout;
 
@@ -27,7 +28,7 @@ const Search: React.FC = () => {
             setLoading(true);
             try {
                 const response = await axios.get('http://127.0.0.1:8000/Search', {
-                    params: { search: searchText },
+                    params: { search: searchText, adult: isAdult ? 1 : 0 },
                 });
                 setSearchResults(response.data.data);
                 setLoading(false);

@@ -2,6 +2,8 @@ import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Search from './Search'
 import Link from 'next/link'
+import OptionSlider from './OptionSlider';
+import { useAppContext } from '@/pages/AppContext';
 interface NavigationItem {
     name: string;
     href: string;
@@ -15,6 +17,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ navigation }: NavbarProps) {
+    const { isAdult, setIsAdult } = useAppContext();
+
     return (
         <Disclosure as="nav" className="bg-gray-800">
             {({ open }) => (
@@ -57,9 +61,12 @@ export default function Navbar({ navigation }: NavbarProps) {
                                                 {item.name}
                                             </Link>
                                         ))}
+
+
                                     </div>
                                 </div>
                             </div>
+                            <OptionSlider></OptionSlider>
                             <Search ></Search>
                         </div>
                     </div>
@@ -81,6 +88,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                                 </Disclosure.Button>
                             ))}
                         </div>
+
                     </Disclosure.Panel>
                 </>
             )}

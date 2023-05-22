@@ -60,7 +60,7 @@ def find_similar_images(image_path, amount=5, adult=1):
                 for data in final_data:
                     if (len(total) > amount):
                         return total[:amount], title
-                    if data["imdb_id"] == imdb_id and int(data["adult"]) == int(adult):
+                    if data["imdb_id"] == imdb_id and (int(data["adult"]) == 0 or int(data["adult"]) == int(adult)):
                         for genre in original_genre:
                             if genre in data["genre"]:
                                 total.append({
@@ -90,20 +90,30 @@ def root_page(request):
 def search(request):
     try:
         search_term = str(request.GET.get("search")).strip()
+        adult_content = str(request.GET.get("adult")).strip()
         movies = []
         exact = []
         partial = []
         for movie in final_data:
-            if len(exact) >= 5:
-                return Response({
-                    "status": True,
-                    "data": exact,
-                })
-            for word in str(movie["title"]).split():
-                if str(word).lower() == search_term.lower():
-                    exact.append(movie)
-            if search_term.lower() in str(movie["title"]).lower():
-                partial.append(movie)
+            if str(movie["adult"]) == "0" or str(movie["adult"]) == adult_content:
+                if len(exact) >= 5:
+                    return Response({
+                        "status": True,
+                        "data": exact,
+                    })
+                for word in str(movie["title"]).split():
+                    if str(word).lower() == search_term.lower():
+                        exact.append({
+                            "imdb_id": movie["imdb_id"],
+                            "title": movie["title"],
+                            "poster_path": movie["poster_path"]
+                        })
+                if search_term.lower() in str(movie["title"]).lower():
+                    partial.append({
+                        "imdb_id": movie["imdb_id"],
+                        "title": movie["title"],
+                        "poster_path": movie["poster_path"]
+                    })
         # Exact içindeki filmleri partial'dan çıkar
         exact = [movie for movie in exact if movie not in partial]
         movies = exact[:5]
@@ -142,7 +152,7 @@ def get_similar_images(request):
                 })
             else:
                 similars, title = find_similar_images(
-                    image_path=movie_id, adult=1)
+                    image_path=movie_id, adult=adult)
                 return Response({
                     "status": True,
                     "data": similars,
@@ -175,17 +185,6 @@ text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
 translator = str.maketrans('', '', string.punctuation)
 # Remove whitespace
 reviews = pd.read_csv("./reviewsClean.csv")
-if os.path.isfile("reviews.pickle"):
-    with open('reviews.pkl', 'rb') as f:
-        reviews = pickle.load(f)
-else:
-    for i in range(len(reviews)):
-        reviews["reviews"][i] = reviews["reviews"][i].lower()
-        reviews["reviews"][i] = re.sub(r'\d+', '', reviews["reviews"][i])
-        reviews["reviews"][i] = reviews["reviews"][i].translate(translator)
-        reviews["reviews"][i] = " ".join(reviews["reviews"][i].split())
-    with open('reviews.pkl', 'wb') as f:
-        pickle.dump(reviews, f)
 
 text_vectorizer.adapt(reviews["reviews"])
 
@@ -195,15 +194,16 @@ def get_text_recommendation(request):
     try:
         data = request.data
 
-        if "searched" in data:
+        if "searched" in data and "adult" in data:
             searched = data["searched"].lower()
+            adult_content = int(data["adult"])
             text = embedding(text_vectorizer(searched))
             neighbours = nn.kneighbors(text, return_distance=False)
             similars = []
             for index in neighbours[0]:
                 movie_id = reviews.iloc[index]["imdb_id"]
                 for movie in final_data:
-                    if movie["imdb_id"] == movie_id:
+                    if movie["imdb_id"] == movie_id and (int(movie["adult"]) == 0 or int(movie["adult"]) == adult_content):
                         similars.append(
                             {"imdb_id": movie_id, "poster_path": movie["poster_path"], "title": movie["title"]})
 
@@ -231,10 +231,17 @@ def get_all_movies(request):
     try:
         start = int(request.query_params.get("start", 0))
         end = int(request.query_params.get("end", len(final_data)))
-        data = final_data[start:end]
+        adult_content = int(request.query_params.get("adult", 1))
+        data = []
+        if (adult_content == 1):
+            data = final_data
+        elif (adult_content == 0):
+            for item in final_data:
+                if item["adult"] == 0:
+                    data.append(item)
         return Response({
             "status": True,
-            "data": data,
+            "data": data[start:end],
             "max": len(final_data)
         })
     except Exception:
