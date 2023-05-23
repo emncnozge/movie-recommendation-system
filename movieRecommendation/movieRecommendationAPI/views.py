@@ -20,7 +20,7 @@ data_dir = '../posters780'
 
 img_size = (300, 300)
 
-with open('../featuresResNet50.pickle', 'rb') as f:
+with open('../featuresResNet50V2.pickle', 'rb') as f:
     features = pickle.load(f)
 
 model = tf.keras.applications.ResNet50(include_top=False, pooling='avg')
