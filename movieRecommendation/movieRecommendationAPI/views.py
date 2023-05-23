@@ -173,7 +173,7 @@ def get_similar_images(request):
 
 
 max_vocab_length = 10000
-max_length = 19800
+max_length = 10469
 reviews = pd.read_csv("./reviewsClean.csv")
 text_vectorizer = TextVectorization(max_tokens=max_vocab_length,
                                     output_mode="int",
