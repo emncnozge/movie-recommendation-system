@@ -98,4 +98,4 @@ npm run start
 
 ### Search
 
-![Search](screenshots/search_area.png)
+![Search](screenshots/search.png)
