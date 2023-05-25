@@ -188,7 +188,7 @@ pooling_layer = layers.GlobalAveragePooling1D()
 x = text_vectorizer(reviews["reviews"])
 x = embedding(x)
 x = pooling_layer(x)
-nn = NearestNeighbors(n_neighbors=24)
+nn = NearestNeighbors(n_neighbors=24,algorithm='ball_tree',p=2)
 nn.fit(x)
 
 
