@@ -1,4 +1,4 @@
-import { useAppContext } from '@/pages/AppContext';
+import { useAppContext } from '@/components/AppContext';
 import React, { useEffect } from 'react';
 
 const OptionSlider = () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import { useAppContext } from "./AppContext";
+import { useAppContext } from "../components/AppContext";
 
 interface PosterData {
   imdb_id: string;
@@ -98,7 +98,7 @@ const MoviesPage: React.FC = () => {
       setCurrentPage(parseInt(e.currentTarget.value));
     }
   };
-  const handlePageNumber = async (e: { target: { value: any } }) => {
+  const handlePageNumber = async (e: { target: { value: any; }; }) => {
     setCurrentPage(parseInt(e.target.value));
   };
   return (

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useAppContext } from '@/pages/AppContext';
+import { useAppContext } from '@/components/AppContext';
 
 interface SearchResult {
     imdb_id: string;
@@ -10,7 +10,7 @@ interface SearchResult {
     poster_path: string;
     adult: number;
     genre: string[];
-    keywords: { id: number; name: string }[];
+    keywords: { id: number; name: string; }[];
 }
 
 const Search: React.FC = () => {

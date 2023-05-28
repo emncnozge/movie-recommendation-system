@@ -1,16 +1,16 @@
-import { Disclosure } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import Search from './Search'
-import Link from 'next/link'
+import { Disclosure } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Search from './Search';
+import Link from 'next/link';
 import OptionSlider from './OptionSlider';
-import { useAppContext } from '@/pages/AppContext';
+import { useAppContext } from '@/components/AppContext';
 interface NavigationItem {
     name: string;
     href: string;
     current: boolean;
 }
 function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
+    return classes.filter(Boolean).join(' ');
 }
 interface NavbarProps {
     navigation: NavigationItem[];
@@ -93,5 +93,5 @@ export default function Navbar({ navigation }: NavbarProps) {
                 </>
             )}
         </Disclosure>
-    )
+    );
 }

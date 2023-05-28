@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import { useAppContext } from "./AppContext";
+import { useAppContext } from "../components/AppContext";
 interface PosterData {
     imdb_id: string;
     poster_path: string;
@@ -25,7 +25,7 @@ const TextSearch: React.FC = () => {
     const [searchedText, setSearchedText] = useState("");
     const [textInfo, setTextInfo] = useState("");
     const handleSearch = async (e: {
-        target: { value: React.SetStateAction<string> };
+        target: { value: React.SetStateAction<string>; };
     }) => {
         setSearchedText(e.target.value);
     };
