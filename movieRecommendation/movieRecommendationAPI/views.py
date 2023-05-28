@@ -187,7 +187,6 @@ nn.fit(x)
 
 @api_view(["POST"])
 def get_text_recommendation(request):
-    print()
     try:
         data = request.data
 
