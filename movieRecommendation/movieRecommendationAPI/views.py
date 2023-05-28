@@ -9,8 +9,6 @@ from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 from tensorflow.keras import layers
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-import string
-import joblib
 import os
 import numpy as np
 
@@ -23,20 +21,15 @@ img_size = (300, 300)
 with open('../featuresResNet50V2.pickle', 'rb') as f:
     features = pickle.load(f)
 
-model = tf.keras.applications.ResNet50(include_top=False, pooling='avg')
-
-# Load model
-directory = "saved_model"
-file_path = os.path.join(directory, "nearest_neighbors.joblib")
-if os.path.exists(directory):
-    nn = joblib.load(file_path)
+model = tf.keras.applications.resnet_v2.ResNet50V2(
+    include_top=False, pooling='avg')
 
 
-def find_similar_images(image_path, amount=5, adult=1):
+def find_similar_images(image_path, amount=24, adult=1):
     img = tf.keras.preprocessing.image.load_img(
         "../posters780/" + image_path + ".jpg", target_size=img_size)
     x = tf.keras.preprocessing.image.img_to_array(img)
-    x = tf.keras.applications.resnet50.preprocess_input(x)
+    x = tf.keras.applications.resnet.preprocess_input(x)
     x = np.expand_dims(x, axis=0)
 
     query_feature = model.predict(x)
@@ -188,12 +181,13 @@ pooling_layer = layers.GlobalAveragePooling1D()
 x = text_vectorizer(reviews["reviews"])
 x = embedding(x)
 x = pooling_layer(x)
-nn = NearestNeighbors(n_neighbors=24,algorithm='ball_tree',p=2)
+nn = NearestNeighbors(n_neighbors=64, algorithm='ball_tree', p=2)
 nn.fit(x)
 
 
 @api_view(["POST"])
 def get_text_recommendation(request):
+    print()
     try:
         data = request.data
 
@@ -204,11 +198,17 @@ def get_text_recommendation(request):
             neighbours = nn.kneighbors(text, return_distance=False)
             similars = []
             for index in neighbours[0]:
-                movie_id = reviews.iloc[index]["imdb_id"]
-                for movie in final_data:
-                    if movie["imdb_id"] == movie_id and (int(movie["adult"]) == 0 or int(movie["adult"]) == adult_content):
-                        similars.append(
-                            {"imdb_id": movie_id, "poster_path": movie["poster_path"], "title": movie["title"]})
+                if len(similars) >= 24:
+                    return Response({
+                        "status": True,
+                        "data": similars
+                    })
+                else:
+                    movie_id = reviews.iloc[index]["imdb_id"]
+                    for movie in final_data:
+                        if movie["imdb_id"] == movie_id and (int(movie["adult"]) == 0 or int(movie["adult"]) == adult_content):
+                            similars.append(
+                                {"imdb_id": movie_id, "poster_path": movie["poster_path"], "title": movie["title"]})
 
             return Response({
                 "status": True,
@@ -242,11 +242,18 @@ def get_all_movies(request):
             for item in final_data:
                 if item["adult"] == 0:
                     data.append(item)
-        return Response({
-            "status": True,
-            "data": data[start:end],
-            "max": len(final_data)
-        })
+        if adult_content == 1:
+            return Response({
+                "status": True,
+                "data": data[start:end],
+                "max": len(final_data)
+            })
+        else:
+            return Response({
+                "status": True,
+                "data": data[start:end],
+                "max": sum(obj.get('adult', 0) == 0 for obj in final_data)
+            })
     except Exception:
         return Response({
             "status": False,
