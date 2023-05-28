@@ -3,3 +3,10 @@ pandas
 requests
 tensorflow
 keras
+joblib
+django
+djangorestframework
+scikit-learn
+lxml
+aiohttp
+matplotlib
