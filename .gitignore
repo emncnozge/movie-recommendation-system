@@ -11,3 +11,4 @@ movie_reviews.json
 *.csv
 movieReviews.json
 *.joblib
+featurestest.pickle
