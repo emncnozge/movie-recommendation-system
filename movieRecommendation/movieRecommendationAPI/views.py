@@ -18,10 +18,10 @@ data_dir = '../posters780'
 
 img_size = (300, 300)
 
-with open('../featuresResNet50V2.pickle', 'rb') as f:
+with open('../featuresResNet50.pickle', 'rb') as f:
     features = pickle.load(f)
 
-model = tf.keras.applications.resnet_v2.ResNet50V2(
+model = tf.keras.applications.ResNet50(
     include_top=False, pooling='avg')
 
 
@@ -29,7 +29,7 @@ def find_similar_images(image_path, amount=24, adult=1):
     img = tf.keras.preprocessing.image.load_img(
         "../posters780/" + image_path + ".jpg", target_size=img_size)
     x = tf.keras.preprocessing.image.img_to_array(img)
-    x = tf.keras.applications.resnet.preprocess_input(x)
+    x = tf.keras.applications.resnet50.preprocess_input(x)
     x = np.expand_dims(x, axis=0)
 
     query_feature = model.predict(x)

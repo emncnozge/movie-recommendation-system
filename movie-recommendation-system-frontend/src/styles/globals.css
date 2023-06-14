@@ -76,3 +76,11 @@ body::-webkit-scrollbar {
     text-align: justify;
     color: #34455d;
 }
+
+.group {
+    transition: .2s ease;
+}
+
+.group:hover {
+    transform: scale(1.05);
+}

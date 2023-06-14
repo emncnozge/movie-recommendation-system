@@ -99,7 +99,7 @@ const MoviesPage: React.FC = () => {
     }
   };
   const handlePageNumber = async (e: { target: { value: any; }; }) => {
-    setCurrentPage(parseInt(e.target.value));
+    setCurrentPage(parseInt(e.target.value || 0));
   };
   return (
     <>
