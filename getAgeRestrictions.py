@@ -33,7 +33,7 @@ async def main():
     with open("movie_info.json", "r", encoding="utf-8") as f:
         movies = json.load(f)
 
-    semaphore = asyncio.Semaphore(10)  # En fazla 20 talep yapılacak
+    semaphore = asyncio.Semaphore(10)
 
     async with aiohttp.ClientSession(headers=headers) as session:
         tasks = []
